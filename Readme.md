@@ -4,7 +4,7 @@
 The first thing to do is to clone the repository:
 
 ```sh
-$ git clone https://github.com/setu-023/Betafore-Assignment.git
+$ git clone https://github.com/setu-023/Asset-Management-System.git
 ```
 
 Create a virtual environment to install dependencies in and activate it:
