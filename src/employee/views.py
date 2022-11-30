@@ -18,9 +18,11 @@ class EmployeeListCreateAPIView(APIView):
     def post(self, request):
         
         try:
+            #avoiding duplicate data
             employee = Employee.objects.get(user=request.data['user'], company=request.data['company'])
             return Response({'message': 'duplicate data', 'data': []}, status.HTTP_405_METHOD_NOT_ALLOWED,)
         except:
+            #checking access for requested user
             has_access = check_access(request)
             if has_access:
                 serializer = EmployeeSerializer(data=request.data)
@@ -45,40 +47,52 @@ class EmployeeListCreateAPIView(APIView):
 class EmployeeRetrieveUpdateDestroyAPIViewAPIView(APIView):
 
     def get(self, request, pk, *args, **kwargs):
-        print(pk)
-        try:
-            employee = Employee.objects.get(id=pk)
-            serializer = EmployeeSerializer(employee)
-            return Response({'message': 'showing data', 'data':serializer.data, 'status':status.HTTP_200_OK})
-        except:
-            return Response({'message': 'no data found', 'data': [], 'status':status.HTTP_404_NOT_FOUND})
+        
+        #checking access for requested user
+        has_access = check_access(request)
+        if has_access:
+            try:
+                employee = Employee.objects.get(id=pk)
+                serializer = EmployeeSerializer(employee)
+                return Response({'message': 'showing data', 'data':serializer.data, 'status':status.HTTP_200_OK})
+            except:
+                return Response({'message': 'no data found', 'data': [], 'status':status.HTTP_404_NOT_FOUND})
+        else:
+            return Response({'message': 'authorization error', 'data': []}, status.HTTP_405_METHOD_NOT_ALLOWED,)
 
 
     def put(self, request, pk, *args, **kwargs):
 
-        print(pk)
-        print(request.data)
         try:
             employee = Employee.objects.get(id=pk)
         except:
             return Response(data={'message': 'no data found', 'data': [], 'status':status.HTTP_404_NOT_FOUND})
-        serializer = EmployeeSerializer(employee, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'data updated', 'data':serializer.data, 'status':status.HTTP_200_OK})
+        #checking access for requested user
+        has_access = check_access(request)
+        if has_access:
+            serializer = EmployeeSerializer(employee, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'data updated', 'data':serializer.data, 'status':status.HTTP_200_OK})
+            else:
+                return Response({'message': 'something went wrong', 'data': serializer.errors, 'status':status.HTTP_405_METHOD_NOT_ALLOWED})
         else:
-            return Response({'message': 'something went wrong', 'data': serializer.errors, 'status':status.HTTP_405_METHOD_NOT_ALLOWED})
+            return Response({'message': 'authorization error', 'data': []}, status.HTTP_405_METHOD_NOT_ALLOWED,)
 
 
     def delete(self, request, pk, *args, **kwargs):
 
         try:
-            print(pk)
-            employee = Employee.objects.get(id=pk)
-            employee.delete()
-            return Response({'message': 'data deleted', 'data':[], 'status':status.HTTP_200_OK})
+            #checking access for requested user
+            has_access = check_access(request)
+            if has_access:
+                employee = Employee.objects.get(id=pk)
+                employee.delete()
+                return Response({'message': 'data deleted', 'data':[], 'status':status.HTTP_200_OK})
         except:
             return Response({'message': 'no data found', 'data': [], 'status':status.HTTP_404_NOT_FOUND})
+        else:
+            return Response({'message': 'authorization error', 'data': []}, status.HTTP_405_METHOD_NOT_ALLOWED,)
 
 
 def check_access(request):
@@ -87,7 +101,10 @@ def check_access(request):
     print(user)
     try:
         access = CompanyAccess.objects.get(user=user, company=request.data['company'])
+        # access = CompanyAccess.objects.get(user=user)
+        print(access)
         return True
     except Exception as e:
+        print(False)
         print(e)
         return False
