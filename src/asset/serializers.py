@@ -4,14 +4,14 @@ from rest_framework import serializers
 
 from asset.models import *
 
-class CompanySerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
 
-    class meta:
+    class Meta:
         model = Asset
-        fiedls = '__all__'
+        fields = '__all__'
 
 class DelegateAssetSerializer(serializers.ModelSerializer):
 
-    class meta:
+    class Meta:
         model = DelegateAsset
-        fiedls = '__all__'
+        fields = '__all__'

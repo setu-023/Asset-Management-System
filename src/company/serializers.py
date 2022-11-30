@@ -4,12 +4,12 @@ from company.models import *
 
 class CompanySerializer(serializers.ModelSerializer):
 
-    class meta:
+    class Meta:
         model = Company
-        fiedls = '__all__'
+        fields = '__all__'
 
 class CompanyAccessSerializer(serializers.ModelSerializer):
 
-    class meta:
+    class Meta:
         model = CompanyAccess
-        fiedls = '__all__'
+        fields = '__all__'

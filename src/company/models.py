@@ -8,7 +8,7 @@ from account.models import User
 
 class Company(models.Model):
 
-    name = CharField(max_length=255)
+    name = models.CharField(max_length=255, default="")
     address = models.TextField()
     phone = models.CharField(max_length=15)
 
