@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'account',
+    'employee',
+    'company',
+    'asset',
+
 
 ]
 
