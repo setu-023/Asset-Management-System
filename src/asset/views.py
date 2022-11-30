@@ -98,3 +98,17 @@ def check_access(request):
     except Exception as e:
         print(e)
         return False
+
+
+class AssetLogAPIView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get(self, request, pk):
+        
+        asset = DelegateAsset.objects.filter(asset=pk)
+        if asset:
+            serializer = AssetSerializer(asset, many=True).data
+            return Response({ 'message': 'asset created', 'data':serializer}, status.HTTP_201_CREATED,)
+        else:
+            return Response({'message': 'no data found', 'data': []}, status.HTTP_404_NOT_FOUND)
